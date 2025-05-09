@@ -1,10 +1,10 @@
 
 # ROI crop variables
 
-roi_x_start = 0
-roi_x_end = 640
-roi_y_start = 0
-roi_y_end = 480
+roi_x_start = 0     # Starting x-coordinate (from left side)
+roi_x_end = 1000    # Ending x-coordinate (from left side)
+roi_y_start = 0     # Starting y-coordinate (from top)
+roi_y_end = 480     # Ending y-coordinate (from top)
 
 
 # Slice variables
