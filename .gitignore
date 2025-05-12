@@ -2,3 +2,4 @@ processing/__pycache__/preprocessing.cpython-312.pyc
 processing/preprocessing.py
 config/__pycache__/settings.cpython-312.pyc
 utils/__pycache__/video_loader.cpython-312.pyc
+processing/__pycache__/width_finding.cpython-312.pyc
