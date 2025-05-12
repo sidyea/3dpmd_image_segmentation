@@ -11,3 +11,6 @@ roi_y_end = 950     # Ending y-coordinate (from top)
 slice_start = 500
 slice_end = 520
 
+# Neural network variables
+model_path = "model/slice_z_model_win20_start500_lr1e-4_bs20_ep10.pth"  # Path to the model
+output_features = 2  # Number of output features from the model
