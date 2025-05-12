@@ -1,7 +1,7 @@
 # imports
 from utils import video_loader
 from processing.preprocessing import crop_to_roi, calculate_intensity_metrics
-from config.settings import model_path, save_path, save_results
+from config.settings import video_path, model_path, save_path, save_results
 from processing.width_finding import load_model, find_edges
 from utils.display_frames import draw_results
 from utils.save_data import append_results, save_results_to_csv
@@ -31,8 +31,7 @@ def main(save_results = save_results):
     # Results list
     results = []
 
-    # open video source
-    video_path = "C:/Users/shark/VSCodeProjects/FSCM/data/video/topview/20250110-132256244035.webm" 
+    print("Running video processing...")
 
     for i, frame in enumerate(video_loader.load_video(video_path)):
         # Crop / Transform
@@ -52,7 +51,9 @@ def main(save_results = save_results):
         
         cv2.imshow("Frame", frame)
 
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("Video processing interrupted by user.")
             break
 
     
@@ -68,6 +69,8 @@ def main(save_results = save_results):
         print("Results save at path:", save_path)
     else:
         print("Results not saved to CSV.")
+
+    print("Video processing completed.")
 
 
 

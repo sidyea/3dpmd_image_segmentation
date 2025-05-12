@@ -45,7 +45,7 @@ def load_model(model_path, device):
         
     # Load the model
     model = Width_ResNet(output_features=output_features)  # Initialize the model
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, weights_only=True))  # Load the model weights
     model = model.to(device)  # Move the model to the specified device
 
     print(f"Model loaded from {model_path} and moved to {device}")
