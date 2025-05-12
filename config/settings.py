@@ -1,5 +1,8 @@
 import pandas as pd
 
+# video
+video_path = "C:/Users/shark/VSCodeProjects/FSCM/data/video/topview/20250110-132256244035.webm"  # Path to the video file
+
 # ROI crop variables
 
 roi_x_start = 400   # Starting x-coordinate (from left side)
