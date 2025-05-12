@@ -73,7 +73,7 @@ def find_edges(model, device, image):
     # Assuming the image is a numpy array with shape (height, width, channels)
     image = image.astype(np.float32)  # Ensure the image is in float format
     image = image[slice_start:slice_end, :, :]  # Crop the image to the specified slice
-    #image = image / 255.0  # Normalize to [0, 1]
+    image = image / 255.0  # Normalize to [0, 1]
 
     image = torch.tensor(image) # Convert to tensor
     image = image.permute(2, 0, 1)  # Change to (channels, height, width)

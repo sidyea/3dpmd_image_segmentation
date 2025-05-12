@@ -23,3 +23,7 @@ l_edge_mean = std_df.l_edge.mean()
 l_edge_std = std_df.l_edge.std()
 r_edge_mean = std_df.r_edge.mean()
 r_edge_std = std_df.r_edge.std()
+
+# Results saving variables
+save_path = "outputs"  # Path to save the results
+save_results = True  # Whether to save the results to a CSV file

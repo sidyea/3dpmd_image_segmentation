@@ -45,9 +45,13 @@ def calculate_intensity_metrics(frame: np.ndarray) -> dict:
     # Calculate minimum intensity
     min_intensity = np.min(gray_frame)
 
+    # Calculate median intensity
+    median_intensity = np.median(gray_frame)
+
     return {
         "mean": mean_intensity,
         "std": std_intensity,
         "max": max_intensity,
-        "min": min_intensity
+        "min": min_intensity,
+        "median": median_intensity
     }
