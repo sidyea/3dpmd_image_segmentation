@@ -2,8 +2,25 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 import numpy as np
+from config.settings import output_features
+from config.settings import slice_start, slice_end
+from config.settings import l_edge_mean, l_edge_std, r_edge_mean, r_edge_std
 
+def std_to_px(left, right):
+    """
+    Convert standardized values to pixel values.
 
+    Args:
+        left (float): Standardized left edge value.
+        right (float): Standardized right edge value.
+
+    Returns:
+        tuple: Pixel values for left and right edges.
+    """
+    left = left * l_edge_std + l_edge_mean
+    right = right * r_edge_std + r_edge_mean
+
+    return left, right
 
 def load_model(model_path, device):
     """
@@ -27,7 +44,7 @@ def load_model(model_path, device):
             return self.resnet(x)
         
     # Load the model
-    model = Width_ResNet(output_features=2)
+    model = Width_ResNet(output_features=output_features)  # Initialize the model
     model.load_state_dict(torch.load(model_path))
     model = model.to(device)  # Move the model to the specified device
 
@@ -40,7 +57,7 @@ def load_model(model_path, device):
     return model
 
 
-def find_width(model, device, image):
+def find_edges(model, device, image):
     """
     Find the width of the object in the image using the model.
 
@@ -55,7 +72,8 @@ def find_width(model, device, image):
     # Preprocess the image
     # Assuming the image is a numpy array with shape (height, width, channels)
     image = image.astype(np.float32)  # Ensure the image is in float format
-    image = image / 255.0  # Normalize to [0, 1]
+    image = image[slice_start:slice_end, :, :]  # Crop the image to the specified slice
+    #image = image / 255.0  # Normalize to [0, 1]
 
     image = torch.tensor(image) # Convert to tensor
     image = image.permute(2, 0, 1)  # Change to (channels, height, width)
@@ -67,13 +85,19 @@ def find_width(model, device, image):
 
     # Forward pass through the model
     with torch.no_grad():
-        output = model(image)
+        output = model(image) # returns standardized values for left and right edges
 
-    output = output.squeeze().cpu().numpy()  # Remove batch dimension
-    # Post-process the output to get the width
+    output = output.squeeze()  # Remove batch dimension
+    output = output.cpu()   # Move to CPU
+    output = output.numpy()  # Convert to numpy array
+
     left = output[0]  # Left side of the object
     right = output[1]  # Right side of the object
 
-    width = right - left  # Calculate width in pixels
+    # Post-process the output to get the width
+    left, right = std_to_px(left, right)  # Convert standardized values to pixel values
 
-    return width
+
+    #width = right - left  # Calculate width in pixels
+
+    return left, right
