@@ -1,10 +1,12 @@
-# imports
+# functions and variables imports
 from utils import video_loader
 from processing.preprocessing import crop_to_roi, calculate_intensity_metrics
 from config.settings import video_path, model_path, save_path, save_results
 from processing.width_finding import load_model, find_edges
 from utils.display_frames import draw_results
 from utils.save_data import append_results, save_results_to_csv
+
+# packages imports
 import cv2
 import torch
 
@@ -12,7 +14,7 @@ import torch
 def main(save_results = save_results):
     """
     Main function to run the width finding process. 
-    It loads the model, processes the video frames, and displays the results.
+    It loads the video and model, processes the video frames, and displays the results.
     It also saves the results to a CSV file if specified.
 
     Args:
@@ -24,51 +26,34 @@ def main(save_results = save_results):
     # Cuda check
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
-
-    # Load model
-    width_predictor = load_model(model_path, device)
-
-    # Results list
-    results = []
+ 
+    video = video_loader.load_video(video_path)         # Load the video
+    width_predictor = load_model(model_path, device)    # Load the model
+    results = []                                        # Initialize results list
 
     print("Running video processing...")
+    #for i, frame in enumerate(video_loader.load_video(video_path)):
+    for i, frame in enumerate(video):
 
-    for i, frame in enumerate(video_loader.load_video(video_path)):
-        # Crop / Transform
-        frame = crop_to_roi(frame)      # crop (values in settings.py)
-
-        # Intensity metrics
-        metrics = calculate_intensity_metrics(frame)
-        
-        # Neural Network
-        left, right = find_edges(width_predictor, device, frame)
-
-        # Save results
-        results = append_results(results, metrics, i, left, right)
-
-        # Draw results on the frame
-        frame = draw_results(frame, metrics, left, right, edge_locations=True, show_metrics=True)
-        
-        cv2.imshow("Frame", frame)
-
+        frame = crop_to_roi(frame)                                  # Crop to ROI (values in settings.py)
+        metrics = calculate_intensity_metrics(frame)                # Calculate intensity metrics
+        left, right = find_edges(width_predictor, device, frame)    # Predict edges
+        results = append_results(results, metrics, i, left, right)  # Save results
+        frame = draw_results(frame, metrics, left, right, 
+                             edge_locations=True, show_metrics=True) # Draw results on frame
+        cv2.imshow("Frame", frame)                                  # Display the frame
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("Video processing interrupted by user.")
             break
 
-    
-    # Clean up
+    # Close all OpenCV windows
     for i in range(1, 5):
         cv2.destroyAllWindows()
         cv2.waitKey(1)
 
-    # Save results to CSV
     if save_results:
-        save_results_to_csv(results, save_path, "results")
-        #save_results_to_json(results, save_path, "results")
-        print("Results save at path:", save_path)
-    else:
-        print("Results not saved to CSV.")
+        save_results_to_csv(results, save_path, "results") # Save results to CSV
 
     print("Video processing completed.")
 
